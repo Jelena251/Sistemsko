@@ -1,0 +1,12 @@
+.public g
+.extern e
+.data
+lab1:
+.data.one
+lab2:
+.text
+g:
+.bss.three
+.extern d, f
+.end jhg
+sin.greska

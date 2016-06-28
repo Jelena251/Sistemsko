@@ -1,0 +1,13 @@
+﻿  SP.cpp
+c:\users\toshiba\documents\visual studio 2015\projects\sp\sp\functions.h(7): warning C4018: '<': signed/unsigned mismatch
+c:\users\toshiba\documents\visual studio 2015\projects\sp\sp\functions.h(9): warning C4018: '<': signed/unsigned mismatch
+c:\users\toshiba\documents\visual studio 2015\projects\sp\sp\sp.cpp(222): warning C4018: '<': signed/unsigned mismatch
+c:\users\toshiba\documents\visual studio 2015\projects\sp\sp\sp.cpp(236): warning C4018: '<': signed/unsigned mismatch
+c:\users\toshiba\documents\visual studio 2015\projects\sp\sp\sp.cpp(260): warning C4018: '<': signed/unsigned mismatch
+c:\users\toshiba\documents\visual studio 2015\projects\sp\sp\sp.cpp(263): warning C4018: '<': signed/unsigned mismatch
+c:\users\toshiba\documents\visual studio 2015\projects\sp\sp\sp.cpp(266): warning C4018: '<': signed/unsigned mismatch
+c:\users\toshiba\documents\visual studio 2015\projects\sp\sp\sp.cpp(267): warning C4018: '<': signed/unsigned mismatch
+c:\users\toshiba\documents\visual studio 2015\projects\sp\sp\sp.cpp(290): warning C4018: '<': signed/unsigned mismatch
+c:\users\toshiba\documents\visual studio 2015\projects\sp\sp\sp.cpp(302): warning C4018: '<': signed/unsigned mismatch
+c:\users\toshiba\documents\visual studio 2015\projects\sp\sp\sp.cpp(135): warning C4101: 'data': unreferenced local variable
+  SP.vcxproj -> C:\Users\Toshiba\documents\visual studio 2015\Projects\SP\Debug\SP.exe
