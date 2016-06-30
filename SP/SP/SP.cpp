@@ -3,111 +3,9 @@
 
 #include "stdafx.h"
 #include "Functions.h"
+#include "Strukture.h"
 using namespace std;
-struct DeoTabeleSekcija {
-	char **sadrzaj;
-	string imeSekcije;
-	int rbSekcije;
-	int trElem;
-	DeoTabeleSekcija(string ime, int rb) {
-		imeSekcije = ime;
-		rbSekcije = rb;
-		sadrzaj = (char**)calloc(20, sizeof(char*));
-		trElem = 0;
-	}
-};
 
-struct ElemSekcija {
-	DeoTabeleSekcija *deo;
-	ElemSekcija *next;
-	ElemSekcija(DeoTabeleSekcija *_deo, ElemSekcija* _next = NULL) {
-		deo = _deo;
-		next = _next;
-	}
-};
-struct DeoTabele {
-	string ime;
-	int rb;
-	int sekcija;
-	int vrednost;
-	char vidljivost;
-	int velicina;
-	DeoTabele(string _ime, int _rb, int _sekcija, int _vrednost = 0, char _vidljivost = 'l', int _velicina = 0) {
-	ime = _ime;
-	rb = _rb;
-	sekcija = _sekcija;
-	vrednost = _vrednost;
-	vidljivost = _vidljivost;
-	velicina = _velicina;
-	}
-};
-struct Elem {
-	DeoTabele *deo;
-	Elem *next;
-	Elem(DeoTabele *_deo, Elem *sled = NULL) {
-		deo = _deo;
-		next = sled;
-	}
-};
-
-void dodajDeo(Elem *sekc, Elem *kraj, string ime, int sekcija, char vidljivost) {
-	DeoTabele *deo = new DeoTabele(ime, 0, sekcija, 0, vidljivost, 0);
-	Elem *novi = new Elem(deo);
-	if (kraj == sekc) {
-		kraj = novi;
-		sekc->next = kraj;
-	}
-	else {
-		kraj->next = novi;
-		kraj = novi;
-	}
-}
-void dodajSekciju(Elem *sekc, string ime, int rb, int sekcija, char vidljivost, ElemSekcija *trSekcija) {
-	DeoTabele *deo = new DeoTabele(ime, rb, sekcija, 0, vidljivost, 0);
-	Elem *novi = new Elem(deo, sekc->next);
-	sekc->next = novi;
-	DeoTabeleSekcija *deoSekc = new DeoTabeleSekcija(ime, rb);
-	trSekcija ->next = new ElemSekcija(deoSekc);
-
-}
-Elem* imaSimbola(Elem *sekc, string simbol) {
-	int i = 0;
-	Elem *tek = sekc ->next;
-	while (tek!= NULL) {
-		if (strcmp(simbol.c_str(), tek->deo->ime.c_str()) == 0)
-			return tek;
-		tek = tek->next;
-	}
-	return NULL;
-}
-void ispisiTabelu(Elem *head, Elem *sekc) {
-	Elem *tek = head;
-	while(tek != NULL) {
-			cout << tek -> deo->rb << "            " << tek->deo->ime << "                 " << tek->deo->sekcija << "       " << tek->deo->vrednost << "     " << tek->deo->vidljivost << "     " << tek->deo->velicina<<'\n';
-			tek = tek->next;
-	}
-}
-void postaviRb(Elem *head) {
-	int id = 0;
-	while (head != NULL) {
-		head->deo->rb = id++;
-		head = head->next;
-	}
-}
-void freeTable(Elem *head) {
-	Elem *pom = head;
-	while (head) {
-		head = head->next;
-		free(pom);
-		pom = head;
-	}
-}
-Elem* dohvatiSekciju(Elem *head, int rb) {
-	int i = 0;
-	Elem *tek = head;
-	while (i++ < rb) tek = tek->next;
-	return tek;
-}
 int main(int argc, char *argv[])
 {
 	cout << "Unesite ime test fajla";
@@ -122,12 +20,12 @@ int main(int argc, char *argv[])
 	
 	Elem *head, *sekcije, *kraj;
 	head = sekcije = kraj = NULL;
-	ElemSekcija *tabelaSekcija, *trSekcija;
+	//ElemSekcija *tabelaSekcija, *trSekcija;
 	DeoTabele *deo = new DeoTabele("UND", 0, 0);
 
 	head = sekcije = kraj = new Elem(deo);
-	DeoTabeleSekcija *deoSekc = new DeoTabeleSekcija("UND", 0);
-	tabelaSekcija = trSekcija = new ElemSekcija(deoSekc);
+	//DeoTabeleSekcija *deoSekc = new DeoTabeleSekcija("UND", 0);
+	//tabelaSekcija = trSekcija = new ElemSekcija(deoSekc);
 
 	int id = 1;
 
@@ -153,7 +51,6 @@ int main(int argc, char *argv[])
 			string simbol;
 			simbol = getParameter(line, i);
 			while (simbol.compare("\0") != 0) {
-				cout << '\n' << "JELENA:: " << simbol << '\n'; //ispis parametra
 				Elem *pom = imaSimbola(sekcije, simbol);
 				if (!pom) {
 					dodajDeo(sekcije, kraj, simbol, sekcije->deo->rb, 'g');
@@ -182,21 +79,21 @@ int main(int argc, char *argv[])
 				}
 		}
 		else if (word.size() >= 4 && word.substr(0, 4) == ".bss") {
-			dodajSekciju(sekcije, word, id, id, 'l', trSekcija);
+			dodajSekciju(sekcije, word, id, id, 'l');
 			sekcije = sekcije->next;
-			trSekcija = trSekcija->next;
+			//trSekcija = trSekcija->next;
 			id++;
 		}
 		else if (word.size() >= 5 && word.substr(0, 5) == ".data") {
-			dodajSekciju(sekcije, word, id, id, 'l', trSekcija);
+			dodajSekciju(sekcije, word, id, id, 'l');
 			sekcije = sekcije->next;
-			trSekcija = trSekcija->next;
+			//trSekcija = trSekcija->next;
 			id++;
 		}
 		else if (word.size() >= 5 && word.substr(0, 5) == ".text") {
-			dodajSekciju(sekcije, word, id, id, 'l', trSekcija);
+			dodajSekciju(sekcije, word, id, id, 'l');
 			sekcije = sekcije->next;
-			trSekcija = trSekcija->next;
+			//trSekcija = trSekcija->next;
 			id++;
 		}
 		else if (word[i - 1] == ':') {
@@ -218,11 +115,11 @@ int main(int argc, char *argv[])
 			//ovde vdi za 'b'
 			char c; 
 			int j = 0;
-			trSekcija->deo->sadrzaj[trSekcija->deo->trElem] = (char*)calloc(10, sizeof(char));
+			//trSekcija->deo->sadrzaj[trSekcija->deo->trElem] = (char*)calloc(10, sizeof(char));
 			while (i < line.size()) {
 				while (line[i] == ' ' || line[i] == ',') i++;
 				c = line[i]; i++;
-				trSekcija->deo->sadrzaj[trSekcija->deo->trElem][j++] = c;
+				//trSekcija->deo->sadrzaj[trSekcija->deo->trElem][j++] = c;
 				sekcije->deo->velicina++;
 			}
 		}
@@ -232,8 +129,8 @@ int main(int argc, char *argv[])
 			string data = getParameter(line, i);
 			numSkip = atoi(data.c_str());
 			sekcije->deo->velicina += numSkip;
-			trSekcija->deo->sadrzaj[trSekcija->deo->trElem] = (char*)calloc(numSkip, sizeof(char));
-			if (i < line.size()) {
+			//trSekcija->deo->sadrzaj[trSekcija->deo->trElem] = (char*)calloc(numSkip, sizeof(char));
+			/*if (i < line.size()) {
 				i++;
 				while (line[i] == ',' || line[i] == ' ') i++;
 				char c = line[i];
@@ -250,63 +147,44 @@ int main(int argc, char *argv[])
 					trSekcija->deo->sadrzaj[trSekcija->deo->trElem][i] = 0;
 			}
 			trSekcija->deo->trElem++;
-
+			*/
 		}
 		else if (word == ".align") {
-			char data[20];
-			int j = 0;
 			int maxBr = 0;
-			while (line[i] == ' ' || line[i] == ',') i++;
-			while (line[i] != ' ' && line[i] != ',' && i<line.size()) data[j++] = line[i++];
-			int broj = stoi(data);
-			
-			if (i++ < line.size()) {
-				while (line[i] == ',' || line[i] == ' ') i++;
-				char c = line[i++];
-				if (i++ < line.size()) { //imamo treci parametar
-					while (line[i] != ' ' && line[i] != ',' && i<line.size()) data[j++] = line[i++];
-					maxBr = stoi(data);
-					if (broj - sekcije->deo->velicina > maxBr) continue; //nece se izvrsiti
+			int broj = stoi(getParameter(line, i));
+			int uvecanje = 0;
+			while ((sekcije->deo->velicina + uvecanje) % broj != 0) uvecanje++;
+			if (i < line.size()) {
+				char c = *(getParameter(line, i).c_str());
+				if (i < line.size()) {
+					maxBr = stoi(getParameter(line, i));
+					if (uvecanje <= maxBr)
+						sekcije->deo->velicina += uvecanje;
 				}
-				trSekcija->deo->sadrzaj[trSekcija->deo->trElem] = (char*)calloc(broj, sizeof(char));
-				for (i = 0; i < broj; i++)
-					trSekcija->deo->sadrzaj[trSekcija->deo->trElem][i] = c;
-			}
-			else { //nemamo drugi parametar
-				trSekcija->deo->sadrzaj[trSekcija->deo->trElem] = (char*)calloc(broj, sizeof(char));
-				for (i = 0; i < broj; i++)
-					trSekcija->deo->sadrzaj[trSekcija->deo->trElem][i] = 0;
-			}
-			sekcije->deo->velicina += broj;
-			trSekcija->deo->trElem++;
+				else 
+					sekcije->deo->velicina += uvecanje;
+			}else
+				sekcije->deo->velicina += uvecanje;
 
 
 		}
 		else if (word == ".word") { //case for label
-			char data[20];
-			int j = 0, cnt =0;
-			int maxBr = 0;
-			while (line[i] == ' ' || line[i] == ',') i++;
-			while (line[i] != ' ' && line[i] != ',' && i<line.size()) data[j++] = line[i++];
-			unsigned int broj = stoi(data);
-			trSekcija->deo->sadrzaj[trSekcija->deo->trElem][cnt++] = (char)broj;
-			trSekcija->deo->sadrzaj[trSekcija->deo->trElem][cnt++] = (char)(broj>>4);
+			unsigned int broj = stoi(getParameter(line, i));
+			//trSekcija->deo->sadrzaj[trSekcija->deo->trElem][cnt++] = (char)broj;
+			//trSekcija->deo->sadrzaj[trSekcija->deo->trElem][cnt++] = (char)(broj>>4);
 			sekcije->deo->velicina += 2;
-			trSekcija->deo->trElem++;
+			//trSekcija->deo->trElem++;
 		}
 		else if (word == ".long") {
-			char data[20];
-			int j = 0, cnt = 0;
-			int maxBr = 0;
-			while (line[i] == ' ' || line[i] == ',') i++;
-			while (line[i] != ' ' && line[i] != ',' && i<line.size()) data[j++] = line[i++];
-			unsigned int broj = stoi(data);
-			trSekcija->deo->sadrzaj[trSekcija->deo->trElem][cnt++] = (char)broj;
+			int cnt = 0;
+			unsigned int broj = stoi(getParameter(line, i));
+			/*trSekcija->deo->sadrzaj[trSekcija->deo->trElem][cnt++] = (char)broj;
 			trSekcija->deo->sadrzaj[trSekcija->deo->trElem][cnt++] = (char)(broj >> 4);
 			trSekcija->deo->sadrzaj[trSekcija->deo->trElem][cnt++] = (char)(broj >> 4);
 			trSekcija->deo->sadrzaj[trSekcija->deo->trElem][cnt++] = (char)(broj >> 4);
+			*/
 			sekcije->deo->velicina += 4;
-			trSekcija->deo->trElem++;
+			//trSekcija->deo->trElem++;
 		}
 		else if (word == ".end") {
 			cout << ".END\n";
