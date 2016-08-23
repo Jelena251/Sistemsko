@@ -4,14 +4,21 @@
 .char 5, 'b'
 .skip 4
 .align 5
+ldr r5, r3, 2, 12
 lab2:
 .text
 .skip 3, 7
+call r3, 15
 g:
 .align 4, 'c', 10
 .align 15, 5, 3
 .bss
+in r2, r3
 .word 7
+int 5
+eq add r5, r3
+sub r4 , r3
+div r2 , 3
 .long 11
 .end
 
@@ -27,7 +34,7 @@ g:
 7   bss         bss         0       l         6
 
 #data.one
-35 62 00 00 00 00 00 00 00 00
+35 62 00 00 00 00 00 00 00 00 ca 28 d4 0c
 #text
 37 37 37 63   
 #bss

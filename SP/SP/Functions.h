@@ -5,13 +5,22 @@ using namespace std;
 string getParameter(string line, int &i) {
 	char data[20];
 	int j = 0;
-	while ((line[i] == ' ' || line[i] == ',') &&  i<line.size())
+	while ((line[i] == ' ' || line[i] == ',' || line[i] == '\'') &&  i<line.size())
 		i++;
 	while (line[i] != ' ' && line[i] != ',' && i < line.size()) {
 		data[j] = line[i];
 		j++; i++;
 	}
 	data[j] = '\0';
+	return data;
+}
+char getChar(string line, int &i) {
+	char data = ' ';
+	while ((line[i] == ' ' || line[i] == ',' || line[i] == '\'') && i<line.size())
+		i++;
+	if(i<line.size())
+		data = line[i];
+		i++;
 	return data;
 }
 
@@ -37,7 +46,7 @@ void dodajSekciju(Elem *sekc, string ime, int rb, int sekcija, char vidljivost) 
 }
 Elem* imaSimbola(Elem *sekc, string simbol) {
 	int i = 0;
-	Elem *tek = sekc->next;
+	Elem *tek = sekc;
 	while (tek != NULL) {
 		if (strcmp(simbol.c_str(), tek->deo->ime.c_str()) == 0)
 			return tek;
@@ -45,11 +54,27 @@ Elem* imaSimbola(Elem *sekc, string simbol) {
 	}
 	return NULL;
 }
-void ispisiTabelu(Elem *head, Elem *sekc) {
+void ispisiTabeluSimbola(Elem *head, ofstream& out) {
 	Elem *tek = head;
 	while (tek != NULL) {
-		cout << tek->deo->rb << "            " << tek->deo->ime << "                 " << tek->deo->sekcija << "       " << tek->deo->vrednost << "     " << tek->deo->vidljivost << "     " << tek->deo->velicina << '\n';
+		out << tek->deo->rb << "	" << tek->deo->ime << "		" << tek->deo->sekcija << "		" << tek->deo->vrednost << "	" << tek->deo->vidljivost << "		" << tek->deo->velicina << '\n';
 		tek = tek->next;
+	}
+}
+void ispisiTabeluSekcija(TabelaSekcija* t, ofstream& out) {
+	TabelaSekcija *pom = t;
+	while (pom!=NULL) {
+		out << "#" << pom->sekcija->deo->ime << '\n';
+		int i = 0;
+		while (i < pom->trVel) {
+			int c0 = (int)(pom->sadrzaj[i] & 0x0f);
+			int c1 = (int)((pom->sadrzaj[i] >> 4) & 0x0f);
+			out << hex << c1;
+			out << hex << c0 << " ";
+			i++;
+		}
+		out << '\n';
+		pom = pom->next;
 	}
 }
 void postaviRb(Elem *head) {
@@ -65,6 +90,15 @@ void freeTable(Elem *head) {
 		head = head->next;
 		free(pom);
 		pom = head;
+	}
+}
+void freeTableOfSections(TabelaSekcija *table) {
+	TabelaSekcija *pom = table;
+	while (table) {
+		table = table->next;
+		free(pom->sadrzaj);
+		free(pom);
+		pom = table;
 	}
 }
 Elem* dohvatiSekciju(Elem *head, int rb) {

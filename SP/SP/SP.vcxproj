@@ -145,8 +145,14 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DrugiProlaz.h" />
     <ClInclude Include="Functions.h" />
+    <ClInclude Include="Instrukcija.h" />
+    <ClInclude Include="PostaviUslove.h" />
+    <ClInclude Include="PrviProlaz.h" />
+    <ClInclude Include="Registar.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Strukture.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>

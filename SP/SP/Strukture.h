@@ -25,3 +25,19 @@ struct Elem {
 		next = sled;
 	}
 };
+
+struct TabelaSekcija {
+	char *sadrzaj;
+	int trVel;
+	Elem *sekcija;
+	TabelaSekcija *next;
+	TabelaSekcija(Elem *sekc, TabelaSekcija* sled) {
+		sadrzaj = new char[100];
+		trVel = 0;
+		next = sled;
+		sekcija = sekc;
+	}
+	~TabelaSekcija() {
+		delete[] sadrzaj;
+	}
+};
