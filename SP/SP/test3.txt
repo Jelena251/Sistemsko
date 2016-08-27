@@ -1,0 +1,24 @@
+.extern g
+.public b
+.text
+lab1:
+.word 5
+.word lab2
+lab2:
+.long lab3
+.long g
+add r4, r5
+mul r6, 15
+.bss
+call PC, lab2
+lab3:
+call PC, lab3
+lab4:
+ldr r16, r3,0,lab4
+lt str r16, r5, 0, 12
+call r3,5
+ldch r4, lab3
+ldc r5, lab2
+.long lab4 - lab3
+.long lab4 - lab2
+.end

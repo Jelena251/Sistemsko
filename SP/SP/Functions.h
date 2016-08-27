@@ -1,9 +1,11 @@
 #pragma once
 #include "stdafx.h"
 #include "Strukture.h"
+#include <iomanip>
 using namespace std;
+
 string getParameter(string line, int &i) {
-	char data[20];
+	char data[100];
 	int j = 0;
 	while ((line[i] == ' ' || line[i] == ',' || line[i] == '\'') &&  i<line.size())
 		i++;
@@ -23,9 +25,8 @@ char getChar(string line, int &i) {
 		i++;
 	return data;
 }
-
-void dodajDeo(Elem *sekc, Elem *kraj, string ime, int sekcija, char vidljivost) {
-	DeoTabele *deo = new DeoTabele(ime, 0, sekcija, 0, vidljivost, 0);
+void dodajDeo(Elem *sekc, Elem *kraj, string ime, int sekcija, char vidljivost, int vrednost) {
+	DeoTabele *deo = new DeoTabele(ime, 0, sekcija, vrednost, vidljivost, 0);
 	Elem *novi = new Elem(deo);
 	if (kraj == sekc) {
 		kraj = novi;
@@ -36,17 +37,14 @@ void dodajDeo(Elem *sekc, Elem *kraj, string ime, int sekcija, char vidljivost) 
 		kraj = novi;
 	}
 }
-void dodajSekciju(Elem *sekc, string ime, int rb, int sekcija, char vidljivost) {//, ElemSekcija *trSekcija) {
+void dodajSekciju(Elem *sekc, string ime, int rb, int sekcija, char vidljivost) {
 	DeoTabele *deo = new DeoTabele(ime, rb, sekcija, 0, vidljivost, 0);
 	Elem *novi = new Elem(deo, sekc->next);
 	sekc->next = novi;
-	//DeoTabeleSekcija *deoSekc = new DeoTabeleSekcija(ime, rb);
-	//trSekcija ->next = new ElemSekcija(deoSekc);
-
 }
-Elem* imaSimbola(Elem *sekc, string simbol) {
+Elem* imaSimbola(Elem *simTable, string simbol) {
 	int i = 0;
-	Elem *tek = sekc;
+	Elem *tek = simTable;
 	while (tek != NULL) {
 		if (strcmp(simbol.c_str(), tek->deo->ime.c_str()) == 0)
 			return tek;
@@ -54,17 +52,21 @@ Elem* imaSimbola(Elem *sekc, string simbol) {
 	}
 	return NULL;
 }
+
 void ispisiTabeluSimbola(Elem *head, ofstream& out) {
+	out << "#### Tabela Simbola #### \n\n";
 	Elem *tek = head;
+	out << setw(10) << "Redni Broj:" << setw(10) << "Ime" << setw(10) << "Sekcija" << setw(12) << "Vrednost" << setw(12) << "Vidljivost" << setw(10) << "Velicina\n";
 	while (tek != NULL) {
-		out << tek->deo->rb << "	" << tek->deo->ime << "		" << tek->deo->sekcija << "		" << tek->deo->vrednost << "	" << tek->deo->vidljivost << "		" << tek->deo->velicina << '\n';
+		out << setw(10)<< tek->deo->rb << setw(10) << tek->deo->ime << setw(10) << tek->deo->sekcija << setw(12) << tek->deo->vrednost << setw(12) << tek->deo->vidljivost << setw(10) << tek->deo->velicina << '\n';
 		tek = tek->next;
 	}
 }
 void ispisiTabeluSekcija(TabelaSekcija* t, ofstream& out) {
 	TabelaSekcija *pom = t;
+	out << "\n\n#### Tabela Sekcija #### \n\n";
 	while (pom!=NULL) {
-		out << "#" << pom->sekcija->deo->ime << '\n';
+		out << "#" << pom->sekcija->deo->ime << "\n\n";
 		int i = 0;
 		while (i < pom->trVel) {
 			int c0 = (int)(pom->sadrzaj[i] & 0x0f);
@@ -75,6 +77,20 @@ void ispisiTabeluSekcija(TabelaSekcija* t, ofstream& out) {
 		}
 		out << '\n';
 		pom = pom->next;
+	}
+}
+void ispisiTabeluRelokacija(TabelaSekcija *tS, ofstream& out) {
+	TabelaSekcija *sekcija = tS;
+	out << "\n\n#### Tabela Relokacija #### \n\n";
+	out << setw(10) << "Sekcija" << setw(10) << "Offset" << setw(10) << "Shift" << setw(10) << "Tip" << setw(10) << "Symbol" << '\n';
+	while (sekcija!= NULL) {
+		Reloc_List *pom = sekcija->relokacije;
+		
+		while (pom) {
+			out << setw(10) << sekcija->sekcija->deo->ime << setw(10) << pom->reloc->offset << setw(10) << pom->reloc->shift << setw(10) << pom->reloc->type << setw(10) << pom->reloc->symbol << '\n';
+			pom = pom->next;
+		}
+		sekcija = sekcija->next;
 	}
 }
 void postaviRb(Elem *head) {
@@ -92,15 +108,27 @@ void freeTable(Elem *head) {
 		pom = head;
 	}
 }
+void freeReloc(Reloc_List *r) {
+	Reloc_List *pom = r;
+	while (r) {
+		r = r->next;
+		free(pom->reloc);
+		pom->reloc = NULL;
+		free(pom);
+		pom = r;
+	}
+}
 void freeTableOfSections(TabelaSekcija *table) {
 	TabelaSekcija *pom = table;
 	while (table) {
 		table = table->next;
 		free(pom->sadrzaj);
+		freeReloc(pom->relokacije);
 		free(pom);
 		pom = table;
 	}
 }
+
 Elem* dohvatiSekciju(Elem *head, int rb) {
 	int i = 0;
 	Elem *tek = head;

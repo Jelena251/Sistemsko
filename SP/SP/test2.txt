@@ -16,6 +16,7 @@ g:
 in r2, r3
 .word 7
 int 5
+call PC, lab2
 eq add r5, r3
 sub r4 , r3
 div r2 , 3

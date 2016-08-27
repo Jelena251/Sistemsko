@@ -10,25 +10,30 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-	cout << "Unesite ime test fajla";
 	string testFile;
-	cin >> testFile;
+	if (argc > 0) testFile = argv[1];
 	ifstream myfile;
 	Elem *tabelaSimbola;
 	TabelaSekcija *tabelaSekcija;
 	myfile.open(testFile);
 	tabelaSimbola = prviProlazAsm(myfile);
 	myfile.close();
-	myfile.open(testFile);
-	tabelaSekcija = drugiProlazAsm(myfile, tabelaSimbola);
-	myfile.close();
+
+	//print table of sections after first pass 
 	ofstream out;
 	out.open("output.txt");
 	ispisiTabeluSimbola(tabelaSimbola, out);
+
+	myfile.open(testFile);
+	tabelaSekcija = drugiProlazAsm(myfile, tabelaSimbola);
+	myfile.close();
+
+	//printing
 	ispisiTabeluSekcija(tabelaSekcija, out);
+	ispisiTabeluRelokacija(tabelaSekcija, out);
 	freeTable(tabelaSimbola);
 	freeTableOfSections(tabelaSekcija);
-	myfile.close();
+	out.close();
     return 0;
 }
 

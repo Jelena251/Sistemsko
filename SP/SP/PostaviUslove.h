@@ -22,13 +22,11 @@ void postaviUslove(int &rezultat, string &word, int& i, string line) {
 	else if (word == "le") {
 		rezultat = rezultat | 0xa0000000;
 	}
-	else if (word == "al") {
-		rezultat = rezultat | 0xe0000000;
-	}
 	else {
-		rezultat = rezultat | 0xc0000000;
+		rezultat = rezultat | 0xe0000000;
 		cond = false;
 	}
+	
 	if (cond) {
 		word = getParameter(line, i);
 	}

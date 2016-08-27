@@ -25,7 +25,7 @@ Elem* prviProlazAsm(ifstream &myfile) {
 			while (simbol.compare("\0") != 0) {
 				Elem *pom = imaSimbola(sekcije, simbol);
 				if (!pom) {
-					dodajDeo(sekcije, kraj, simbol, sekcije->deo->rb, 'g');
+					dodajDeo(sekcije, kraj, simbol, sekcije->deo->rb, 'g', sekcije->deo->velicina);
 					if (kraj == sekcije)
 						kraj = sekcije->next;
 					else
@@ -41,7 +41,7 @@ Elem* prviProlazAsm(ifstream &myfile) {
 			string simbol = getParameter(line, i);
 			while (simbol.compare("\0") != 0) {
 				if (!imaSimbola(sekcije, simbol)) {
-					dodajDeo(sekcije, kraj, simbol, 0, 'g');
+					dodajDeo(sekcije, kraj, simbol, 0, 'g', sekcije->deo->velicina);
 					if (kraj == sekcije)
 						kraj = sekcije->next;
 					else
@@ -73,7 +73,7 @@ Elem* prviProlazAsm(ifstream &myfile) {
 				simb->deo->vrednost = sekcije->deo->velicina;
 			}
 			else {
-				dodajDeo(sekcije, kraj, word, sekcije->deo->rb, 'l');
+				dodajDeo(sekcije, kraj, word, sekcije->deo->rb, 'l', sekcije->deo->velicina);
 				if (kraj == sekcije)
 					kraj = sekcije->next;
 				else
@@ -116,17 +116,18 @@ Elem* prviProlazAsm(ifstream &myfile) {
 
 		}
 		else if (word == ".word") {
-			unsigned int broj = stoi(getParameter(line, i));
 			sekcije->deo->velicina += 2;
 		}
 		else if (word == ".long") {
 			int cnt = 0;
-			unsigned int broj = stoi(getParameter(line, i));
 			sekcije->deo->velicina += 4;
 		}
 		else if (word == ".end") {
 			cout << ".END\n";
 			break;
+		}else {
+			if(word == "ldc") sekcije->deo->velicina += 8;
+			sekcije->deo->velicina += 4;
 		}
 	}
 	postaviRb(head);

@@ -8,13 +8,14 @@ TabelaSekcija* drugiProlazAsm(ifstream &myfile,Elem *tabelaSimbola) {
 	string word, line;
 
 //ovde napravi tabelu sekcija
+
 	TabelaSekcija *head, *tr;
 	int id;
 	Elem* sekcija = imaSimbola(tabelaSimbola, "UND");
 	head = new TabelaSekcija(sekcija, NULL);
 	tr = head;
 	while (!myfile.eof()) {
-		char data[100];
+
 		getline(myfile, line);
 		int i = 0;
 		word = getParameter(line, i);
@@ -92,16 +93,161 @@ TabelaSekcija* drugiProlazAsm(ifstream &myfile,Elem *tabelaSimbola) {
 			}
 		}
 		else if (word == ".word") {
-			unsigned int n = stoi(getParameter(line, i));
+			unsigned int n;
+			string par = getParameter(line, i);
+			Elem *sim = imaSimbola(tabelaSimbola, par);
+			if(sim){
+				int type = (sim->deo->vidljivost = 'l') ? sim->deo->sekcija : 0;
+				tr->dodajRelokaciju(new Relocation(tr->trVel, 0, "APS_32", type));
+				if (sim->deo->vidljivost = 'l') {
+					n = sim->deo->vrednost;
+				}
+				else {
+					n = 0;
+				}
+			}
+			else {
+				 n= stoi(par);
+			}
 			tr->sadrzaj[tr->trVel] = (char)(n & 0x00ff);
 			n <<= 8;
 			tr->trVel++;
 			tr->sadrzaj[tr->trVel] = char(n & 0x00ff);
 			tr->trVel++;
-			
 		}
 		else if (word == ".long") {
-			unsigned int n = stoi(getParameter(line, i));
+			unsigned int n;
+			string tipRel;
+				//par je aritmmeticki izraz
+				//obrada izraza
+				int j = 0;
+				string par1 ="", par2 = "";
+				char op1=' ', op2=' ';
+				if (line[i] == '-') {
+						i++; op1 = '-'; 
+					}
+					else {
+						op1 = '+';
+					}
+
+				par1 = getParameter(line, i); //ovo je prvi parametar
+				if (i < line.size()) {
+					i++;
+					op2 = line[i];
+					i++;
+					par2 = getParameter(line, i); //ovo je drugi parametar
+				}
+				Elem *sim1 = imaSimbola(tabelaSimbola, par1);
+				Elem *sim2 = NULL;
+				if (par2 != "") {
+					sim2 = imaSimbola(tabelaSimbola, par2);
+				}
+				if (sim1 && sim2) {
+					if ((sim1->deo->sekcija == sim2->deo->sekcija) && sim1->deo->vidljivost == 'l' && sim2->deo->vidljivost == 'l' && ((op1 == '+' && op2 == '-') || (op1 == '-' && op2 == '+'))) {
+						if (op1 == '+' && op2 == '+')
+							n = sim1->deo->vrednost + sim2->deo->vrednost;
+						else if (op1 == '+' && op2 == '-')
+							n = sim1->deo->vrednost - sim2->deo->vrednost;
+						else if (op1 == '-' && op2 == '+')
+							n = 0-sim1->deo->vrednost + sim2->deo->vrednost;
+						else 
+							n = 0-sim1->deo->vrednost - sim2->deo->vrednost;
+					}
+					else {
+						//relokacija za labelu 1
+						if (op1 == '-') tipRel = "APS_32N";
+						else tipRel = "APS_32";
+						int	type = (sim1->deo->vidljivost = 'l') ? sim1->deo->sekcija : 0;
+						tr->dodajRelokaciju(new Relocation(tr->trVel, 0, tipRel, type));
+
+						if (op2 == '-') tipRel = "APS_32N";
+						else tipRel = "APS_32";
+						type = (sim2->deo->vidljivost = 'l') ? sim2->deo->sekcija : 0;
+						tr->dodajRelokaciju(new Relocation(tr->trVel, 0, tipRel, type));
+
+						//sta upisuje u n ?????????
+						if (sim1->deo->vidljivost = 'l' && sim2->deo->vidljivost == 'l') {
+							if (op1 == '+' && op2 == '+')
+								n = sim1->deo->vrednost + sim2->deo->vrednost;
+							else if (op1 == '+' && op2 == '-')
+								n = sim1->deo->vrednost - sim2->deo->vrednost;
+							else if (op1 == '-' && op2 == '+')
+								n = 0 - sim1->deo->vrednost + sim2->deo->vrednost;
+							else
+								n = 0 - sim1->deo->vrednost - sim2->deo->vrednost;
+						}
+						else if (sim1->deo->vidljivost = 'l') {
+							if (op1 = '-') n = 0 - sim1->deo->vrednost;
+							else n = sim1->deo->vrednost;
+						}
+						else if (sim2->deo->vidljivost = 'l') {
+							if (op2 = '-') n = 0 - sim2->deo->vrednost;
+							else n = sim2->deo->vrednost;
+						}
+						else
+							n = 0;
+					}
+				}else if (sim1) {
+					//relokacija za labelu1
+					if (op1 == '-') tipRel = "APS_32N";
+					else tipRel = "APS_32";
+					int	type = (sim1->deo->vidljivost = 'l') ? sim1->deo->sekcija : 0;
+					tr->dodajRelokaciju(new Relocation(tr->trVel, 0, tipRel, type));
+					int vr = (sim1->deo->vidljivost = 'l') ? sim1->deo->vrednost : 0;
+					//ako ima drugi operand sta radi i sta upisuje u n??? - obicno upisuje onu vrednost od 
+					if (par2 != "") {
+						if (op1 == '+' && op2 == '+') {
+							n = vr + stoi(par2);
+						}else if (op1 == '+' && op2 == '-') {
+							n = vr - stoi(par2);
+						}else if (op1 == '-' && op2 == '+') {
+							n = 0 - vr + stoi(par2);
+						}
+						else {
+							n = 0- vr - stoi(par2);
+						}
+					}
+					else {
+						n = vr;
+					}
+				}
+				else if (sim2) {
+
+					if (op2 == '-') tipRel = "APS_32N";
+					else tipRel = "APS_32";
+					int	type = (sim2->deo->vidljivost = 'l') ? sim2->deo->sekcija : 0;
+					tr->dodajRelokaciju(new Relocation(tr->trVel, 0, tipRel, type));
+					int vr = (sim2->deo->vidljivost = 'l') ? sim2->deo->sekcija : 0;
+					if (op1 == '+' && op2 == '+') {
+						n = vr + stoi(par1);
+					}
+					else if (op1 == '+' && op2 == '-') {
+						n = stoi(par1) - vr;
+					}
+					else if (op1 == '-' && op2 == '+') {
+						n = vr + stoi(par1);
+					}
+					else {
+						n = 0 - vr - stoi(par1);
+					}
+				}
+				else {
+					n = stoi(par1);
+					if (par2 != "") {
+						int n2 = stoi(par2);
+						if (op1 == '+' && op2 == '+') {
+							n = n + n2;
+						}
+						else if (op1 == '+' && op2 == '-') {
+							n = n - n2;
+						}
+						else if (op1 == '-' && op2 == '+') {
+							n = n2 - n;
+						}
+						else n = 0 - n - n2;
+					}
+				}
+			
 			tr->sadrzaj[tr->trVel] = (char)(n & 0x00ff);
 			tr->trVel++;
 			n <<= 8;
@@ -120,7 +266,7 @@ TabelaSekcija* drugiProlazAsm(ifstream &myfile,Elem *tabelaSimbola) {
 		else {
 
 			
-			int n = obradiInstrukciju(word, i, line);
+			int n = obradiInstrukciju(word, i, line, tabelaSimbola, tr);
 			tr->sadrzaj[tr->trVel] = (char)((n & 0xff000000)>>24);
 			tr->trVel++;
 			n <<= 8;

@@ -33,13 +33,13 @@ char dohvatiBrojRegistra(string reg, string ins) {
 		return 0x0e;
 	else if (reg == "r15")
 		return 0x0f;
-	else if (reg == "PC" && (ins == "add" || ins == "sub" || ins == "ldr" || ins == "str" || ins == "call" || ins == "mov" || ins == "shr" || ins == "shl") )
+	else if ((reg == "PC" || reg =="r16") && (ins == "add" || ins == "sub" || ins == "ldr" || ins == "str" || ins == "call" || ins == "mov" || ins == "shr" || ins == "shl") )
 		return 0x10;
-	else if (reg == "LR" && (ins == "add" || ins == "sub" || ins == "ldr" || ins == "str" || ins == "call" || ins == "mov" || ins == "shr" || ins == "shl"))
+	else if ((reg == "LR" || reg == "r17") && (ins == "add" || ins == "sub" || ins == "ldr" || ins == "str" || ins == "call" || ins == "mov" || ins == "shr" || ins == "shl"))
 		return 0x11;
-	else if (reg == "SP" && (ins == "add" || ins  == "sub" || ins == "ldr" || ins == "str" || ins == "call" || ins == "mov" || ins == "shr" || ins == "shl"))
+	else if ((reg == "SP" || reg == "r18") && (ins == "add" || ins  == "sub" || ins == "ldr" || ins == "str" || ins == "call" || ins == "mov" || ins == "shr" || ins == "shl"))
 		return 0x12;
-	else if (reg == "PSW" && (ins == "ldr" || ins == "str" || ins == "call" || ins == "mov" || ins == "shr" || ins == "shl"))
+	else if ((reg == "PSW" || reg == "r19") && (ins == "ldr" || ins == "str" || ins == "call" || ins == "mov" || ins == "shr" || ins == "shl"))
 		return 0x13;
 	else return 'e';
 }
