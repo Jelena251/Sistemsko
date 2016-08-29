@@ -1,5 +1,5 @@
-#pragma once
-#include "stdafx.h"
+#ifndef DRUGI_PROLAZ_H_
+#define DRUGI_PROLAZ_H_
 #include "Functions.h"
 #include "Instrukcija.h"
 using namespace std;
@@ -97,23 +97,34 @@ TabelaSekcija* drugiProlazAsm(ifstream &myfile,Elem *tabelaSimbola) {
 			string par = getParameter(line, i);
 			Elem *sim = imaSimbola(tabelaSimbola, par);
 			if(sim){
-				int type = (sim->deo->vidljivost = 'l') ? sim->deo->sekcija : 0;
+				int type = (sim->deo->vidljivost == 'l') ? sim->deo->sekcija : sim->deo->rb;
 				tr->dodajRelokaciju(new Relocation(tr->trVel, 0, "APS_32", type));
-				if (sim->deo->vidljivost = 'l') {
+				if (sim->deo->vidljivost == 'l') {
 					n = sim->deo->vrednost;
 				}
 				else {
 					n = 0;
 				}
+				tr->sadrzaj[tr->trVel] = (char)(n & 0x00ff);
+				n <<= 8;
+				tr->trVel++;
+				tr->sadrzaj[tr->trVel] = char(n & 0x00ff);
+				n <<= 8;
+				tr->trVel++;
+				tr->sadrzaj[tr->trVel] = char(n & 0x00ff);
+				n <<= 8;
+				tr->trVel++;
+				tr->sadrzaj[tr->trVel] = char(n & 0x00ff);
+				tr->trVel++;
 			}
 			else {
-				 n= stoi(par);
+				n = stoi(par);
+				tr->sadrzaj[tr->trVel] = (char)(n & 0x00ff);
+				n <<= 8;
+				tr->trVel++;
+				tr->sadrzaj[tr->trVel] = char(n & 0x00ff);
+				tr->trVel++;
 			}
-			tr->sadrzaj[tr->trVel] = (char)(n & 0x00ff);
-			n <<= 8;
-			tr->trVel++;
-			tr->sadrzaj[tr->trVel] = char(n & 0x00ff);
-			tr->trVel++;
 		}
 		else if (word == ".long") {
 			unsigned int n;
@@ -157,16 +168,16 @@ TabelaSekcija* drugiProlazAsm(ifstream &myfile,Elem *tabelaSimbola) {
 						//relokacija za labelu 1
 						if (op1 == '-') tipRel = "APS_32N";
 						else tipRel = "APS_32";
-						int	type = (sim1->deo->vidljivost = 'l') ? sim1->deo->sekcija : 0;
+						int	type = (sim1->deo->vidljivost == 'l') ? sim1->deo->sekcija : sim1->deo->rb;
 						tr->dodajRelokaciju(new Relocation(tr->trVel, 0, tipRel, type));
 
 						if (op2 == '-') tipRel = "APS_32N";
 						else tipRel = "APS_32";
-						type = (sim2->deo->vidljivost = 'l') ? sim2->deo->sekcija : 0;
+						type = (sim2->deo->vidljivost == 'l') ? sim2->deo->sekcija : sim2->deo->rb;
 						tr->dodajRelokaciju(new Relocation(tr->trVel, 0, tipRel, type));
 
 						//sta upisuje u n ?????????
-						if (sim1->deo->vidljivost = 'l' && sim2->deo->vidljivost == 'l') {
+						if (sim1->deo->vidljivost == 'l' && sim2->deo->vidljivost == 'l') {
 							if (op1 == '+' && op2 == '+')
 								n = sim1->deo->vrednost + sim2->deo->vrednost;
 							else if (op1 == '+' && op2 == '-')
@@ -176,11 +187,11 @@ TabelaSekcija* drugiProlazAsm(ifstream &myfile,Elem *tabelaSimbola) {
 							else
 								n = 0 - sim1->deo->vrednost - sim2->deo->vrednost;
 						}
-						else if (sim1->deo->vidljivost = 'l') {
+						else if (sim1->deo->vidljivost == 'l') {
 							if (op1 = '-') n = 0 - sim1->deo->vrednost;
 							else n = sim1->deo->vrednost;
 						}
-						else if (sim2->deo->vidljivost = 'l') {
+						else if (sim2->deo->vidljivost == 'l') {
 							if (op2 = '-') n = 0 - sim2->deo->vrednost;
 							else n = sim2->deo->vrednost;
 						}
@@ -191,9 +202,9 @@ TabelaSekcija* drugiProlazAsm(ifstream &myfile,Elem *tabelaSimbola) {
 					//relokacija za labelu1
 					if (op1 == '-') tipRel = "APS_32N";
 					else tipRel = "APS_32";
-					int	type = (sim1->deo->vidljivost = 'l') ? sim1->deo->sekcija : 0;
+					int	type = (sim1->deo->vidljivost == 'l') ? sim1->deo->sekcija : sim1->deo->rb;
 					tr->dodajRelokaciju(new Relocation(tr->trVel, 0, tipRel, type));
-					int vr = (sim1->deo->vidljivost = 'l') ? sim1->deo->vrednost : 0;
+					int vr = (sim1->deo->vidljivost == 'l') ? sim1->deo->vrednost : sim1->deo->rb;
 					//ako ima drugi operand sta radi i sta upisuje u n??? - obicno upisuje onu vrednost od 
 					if (par2 != "") {
 						if (op1 == '+' && op2 == '+') {
@@ -215,9 +226,9 @@ TabelaSekcija* drugiProlazAsm(ifstream &myfile,Elem *tabelaSimbola) {
 
 					if (op2 == '-') tipRel = "APS_32N";
 					else tipRel = "APS_32";
-					int	type = (sim2->deo->vidljivost = 'l') ? sim2->deo->sekcija : 0;
+					int	type = (sim2->deo->vidljivost == 'l') ? sim2->deo->sekcija : sim2->deo->rb;
 					tr->dodajRelokaciju(new Relocation(tr->trVel, 0, tipRel, type));
-					int vr = (sim2->deo->vidljivost = 'l') ? sim2->deo->sekcija : 0;
+					int vr = (sim2->deo->vidljivost == 'l') ? sim2->deo->sekcija : sim2->deo->rb;
 					if (op1 == '+' && op2 == '+') {
 						n = vr + stoi(par1);
 					}
@@ -283,3 +294,4 @@ TabelaSekcija* drugiProlazAsm(ifstream &myfile,Elem *tabelaSimbola) {
 	}
 	return head;
 }
+#endif

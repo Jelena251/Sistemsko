@@ -1,12 +1,16 @@
 .public g
-.extern e
-.data
-lab1:
-.data.one
-lab2:
 .text
+int 5
+.align 4, 'c', 10
+.align 15, 5, 3
+.bss
+in r2, r3
+lab2:
+out r2, r3
+.word 7
+eq add r5, r3
+sub r4 , r3
+div r2 , 3
+.long 11
 g:
-.bss.three
-.extern d, f
-.end jhg
-sin.greska
+.end

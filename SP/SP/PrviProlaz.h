@@ -1,5 +1,5 @@
-#pragma once
-#include "stdafx.h"
+#ifndef PRVI_PROLAZ_H_
+#define PRVI_PROLAZ_H_
 #include "Functions.h"
 #include "Strukture.h"
 using namespace std;
@@ -52,16 +52,19 @@ Elem* prviProlazAsm(ifstream &myfile) {
 		}
 		else if (word.size() >= 4 && word.substr(0, 4) == ".bss") {
 			dodajSekciju(sekcije, word, id, id, 'l');
+			if (kraj == sekcije) kraj = sekcije->next;
 			sekcije = sekcije->next;
 			id++;
 		}
 		else if (word.size() >= 5 && word.substr(0, 5) == ".data") {
 			dodajSekciju(sekcije, word, id, id, 'l');
+			if (kraj == sekcije) kraj = sekcije->next;
 			sekcije = sekcije->next;
 			id++;
 		}
 		else if (word.size() >= 5 && word.substr(0, 5) == ".text") {
 			dodajSekciju(sekcije, word, id, id, 'l');
+			if (kraj == sekcije) kraj = sekcije->next;
 			sekcije = sekcije->next;
 			id++;
 		}
@@ -85,8 +88,8 @@ Elem* prviProlazAsm(ifstream &myfile) {
 			int j = 0;
 			while (i < line.size()) {
 				while (line[i] == ' ' || line[i] == ',') i++;
-				c = line[i]; i++;
-				sekcije->deo->velicina++;
+				c = getChar(line, i); 
+				if (c!=' ') sekcije->deo->velicina++;
 			}
 		}
 		else if (word == ".skip") {
@@ -116,6 +119,8 @@ Elem* prviProlazAsm(ifstream &myfile) {
 
 		}
 		else if (word == ".word") {
+			if (imaSimbola(sekcije, getParameter(line, i))) 
+				sekcije->deo->velicina += 2;
 			sekcije->deo->velicina += 2;
 		}
 		else if (word == ".long") {
@@ -127,10 +132,11 @@ Elem* prviProlazAsm(ifstream &myfile) {
 			break;
 		}else {
 			if(word == "ldc") sekcije->deo->velicina += 8;
-			sekcije->deo->velicina += 4;
+			else sekcije->deo->velicina += 4;
 		}
 	}
 	postaviRb(head);
 	
 	return head;
 }
+#endif

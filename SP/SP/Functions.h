@@ -1,5 +1,5 @@
-#pragma once
-#include "stdafx.h"
+#ifndef FUNCTIONS_H_
+#define FUNCTIONS_H_
 #include "Strukture.h"
 #include <iomanip>
 using namespace std;
@@ -59,6 +59,8 @@ void ispisiTabeluSimbola(Elem *head, ofstream& out) {
 	out << setw(10) << "Redni Broj:" << setw(10) << "Ime" << setw(10) << "Sekcija" << setw(12) << "Vrednost" << setw(12) << "Vidljivost" << setw(10) << "Velicina\n";
 	while (tek != NULL) {
 		out << setw(10)<< tek->deo->rb << setw(10) << tek->deo->ime << setw(10) << tek->deo->sekcija << setw(12) << tek->deo->vrednost << setw(12) << tek->deo->vidljivost << setw(10) << tek->deo->velicina << '\n';
+		cout << setw(10) << tek->deo->rb << setw(10) << tek->deo->ime << setw(10) << tek->deo->sekcija << setw(12) << tek->deo->vrednost << setw(12) << tek->deo->vidljivost << setw(10) << tek->deo->velicina << '\n';
+
 		tek = tek->next;
 	}
 }
@@ -135,3 +137,4 @@ Elem* dohvatiSekciju(Elem *head, int rb) {
 	while (i++ < rb) tek = tek->next;
 	return tek;
 }
+#endif

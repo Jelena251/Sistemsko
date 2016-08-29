@@ -3,18 +3,18 @@
 // are changed infrequently
 //
 
-#pragma once
+#ifndef STDAFX_H
+#define STDAFX_H
 
-#include "targetver.h"
 
 #include <stdio.h>
-#include <tchar.h>
+#include <string.h>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <sstream>
 
 
-
+#endif
 
 // TODO: reference additional headers your program requires here

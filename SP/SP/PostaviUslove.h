@@ -1,5 +1,5 @@
-#pragma once
-#include "stdafx.h"
+#ifndef _POSTAVI_USLOVE_
+#define _POSTAVI_USLOVE_
 #include "Functions.h"
 
 void postaviUslove(int &rezultat, string &word, int& i, string line) {
@@ -31,3 +31,4 @@ void postaviUslove(int &rezultat, string &word, int& i, string line) {
 		word = getParameter(line, i);
 	}
 }
+#endif

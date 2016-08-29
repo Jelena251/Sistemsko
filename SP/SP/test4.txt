@@ -1,0 +1,8 @@
+.extern s
+.text
+.align 5
+.skip 3, 2
+.data.one
+.skip 5
+.char 5, 'a'
+.end

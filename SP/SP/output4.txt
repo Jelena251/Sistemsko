@@ -1,0 +1,25 @@
+#### Tabela Simbola #### 
+
+Redni Broj:       Ime   Sekcija    Vrednost  Vidljivost Velicina
+         0       UND         0           0           l         0
+         1     .text         1           0           l         3
+         2 .data.one         2           0           l         7
+         3         s         0           0           g         0
+
+
+#### Tabela Sekcija #### 
+
+#UND
+
+
+#.text
+
+32 32 32 
+#.data.one
+
+00 00 00 00 00 35 61 
+
+
+#### Tabela Relokacija #### 
+
+   Sekcija    Offset     Shift       Tip    Symbol

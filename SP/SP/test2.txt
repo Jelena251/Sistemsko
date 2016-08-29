@@ -4,39 +4,10 @@
 .char 5, 'b'
 .skip 4
 .align 5
-ldr r5, r3, 2, 12
+ldr r5, r3, 4, 12
 lab2:
+g:
 .text
 .skip 3, 7
 call r3, 15
-g:
-.align 4, 'c', 10
-.align 15, 5, 3
-.bss
-in r2, r3
-.word 7
-int 5
-call PC, lab2
-eq add r5, r3
-sub r4 , r3
-div r2 , 3
-.long 11
 .end
-
-#tabela simbola
-#rb	ime			sek.		vred.	vidlj.	velicina
-0   und         und         0       l         0
-1   g           text         3       g         0
-2   d           und         0       g         0
-3   f           und         0       g         0
-4   data.one    data.one    0       l         10
-5   lab2        data.one    10      l         0
-6   text        text        0       l         5
-7   bss         bss         0       l         6
-
-#data.one
-35 62 00 00 00 00 00 00 00 00 ca 28 d4 0c
-#text
-37 37 37 63   
-#bss
-07 00 0B 00 00 00   

@@ -1,5 +1,5 @@
-#pragma once
-#include"stdafx.h"
+#ifndef REGISTAR_H_
+#define REGISTAR_H_
 char dohvatiBrojRegistra(string reg, string ins) {
 	if (reg == "r0")
 		return 0x00;
@@ -43,3 +43,4 @@ char dohvatiBrojRegistra(string reg, string ins) {
 		return 0x13;
 	else return 'e';
 }
+#endif

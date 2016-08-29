@@ -10,7 +10,7 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-	string testFile;
+	char* testFile = NULL;
 	if (argc > 0) testFile = argv[1];
 	ifstream myfile;
 	Elem *tabelaSimbola;
@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 
 	//print table of sections after first pass 
 	ofstream out;
-	out.open("output.txt");
+	out.open(argv[2]);
 	ispisiTabeluSimbola(tabelaSimbola, out);
 
 	myfile.open(testFile);

@@ -1,5 +1,5 @@
-#pragma once
-#include "stdafx.h"
+#ifndef STRUKTURE_H
+#define STRUKTURE_H
 using namespace std;
 struct DeoTabele {
 	string ime;
@@ -77,3 +77,4 @@ struct TabelaSekcija {
 
 	}
 };
+#endif

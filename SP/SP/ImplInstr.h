@@ -1,5 +1,5 @@
-#pragma once
-#include "stdafx.h"
+#ifndef IMPL_INSTR_H_
+#define IMPL_INSTR_H_
 #include "Functions.h"
 #include "PostaviUslove.h"
 #include "Registar.h"
@@ -20,7 +20,7 @@ void Aritmeticka(int &rezultat, string line, int& i, string word) {
 	}
 	else {
 		pom = 0x00000000 | regD;
-		pom <<= 14;
+		pom <<= 13;
 		rezultat = rezultat | pom;
 	}
 }
@@ -58,17 +58,25 @@ void LdSt(int &rezultat, string line, int& i, string word, Elem *tabelaSimbola, 
 	int f = stoi(par);
 	if (relative) f = 0;
 	pom = 0x00000000 | f;
-	pom <<= 9;
+	pom <<= 11;
 	rezultat = rezultat | pom;
 	//neposredna vrednost ili labela
 	par = getParameter(line, i);
 	Elem *sim = imaSimbola(tabelaSimbola, par);
 	if (sim) {
-		int simNum = (sim->deo->vidljivost == 'l') ? sim->deo->sekcija : 0;
+		int simNum = (sim->deo->vidljivost == 'l') ? sim->deo->sekcija : sim->deo->rb;
 		string type = relative ? "PC_REL_10" : "APS_10";
  		tSekcija->dodajRelokaciju(new Relocation(tSekcija->trVel + 2, 6, type, simNum));
-		if (sim->deo->vidljivost == 'l') f = sim->deo->vrednost;
-		else f = 0;
+
+		if (sim->deo->vidljivost == 'l')
+		{
+			if (relative) f = sim->deo->vrednost - tSekcija->trVel - 4;
+			else	f = sim->deo->vrednost;
+		}
+		else {
+			if (relative) f = 0 - tSekcija->trVel - 4;
+			else f = 0;
+		}
 
 	}
 	else {
@@ -95,15 +103,17 @@ void Call(int &rezultat, string line, int& i, string word, Elem *tabelaSimbola, 
 	int f;
 	Elem * sim = imaSimbola(tabelaSimbola, par);
 	if (sim) {
-		if (sim->deo->vidljivost == 'l' && sim == tSekcije->sekcija) {
-			f = sim->deo->vrednost;
+		if (sim->deo->vidljivost == 'l' && sim->deo->sekcija == tSekcije->sekcija->deo->rb) {
+			f = sim->deo->vrednost - tSekcije->trVel - 4;
 		}else{
-			int simNum = (sim->deo->vidljivost == 'l') ? sim->deo->sekcija : 0;
+			int simNum = (sim->deo->vidljivost == 'l') ? sim->deo->sekcija : sim->deo->rb;
 			tSekcije->dodajRelokaciju(new Relocation((tSekcije->trVel + 1), 5, "PC_REL_19", simNum));
 			if (sim->deo->vidljivost == 'l')
-				f = sim->deo->vrednost;
-			else
-				f = 0;
+				f = sim->deo->vrednost - tSekcije->trVel-4;
+			else {
+
+				f = 0 - tSekcije->trVel - 4;
+			}
 		}
 	}
 	else {
@@ -124,6 +134,7 @@ void InOut(int &rezultat, string line, int& i, string word) {
 	pom = 0x00000000 | regD;
 	pom <<= 16;
 	if (word == "in") pom = pom | 0x00008000;
+
 	rezultat = rezultat | pom;
 }
 
@@ -158,12 +169,12 @@ void Ldch(int &rezultat, string line, int& i, string word, Elem *tabelaSimbola, 
 	string vrednost = getParameter(line, i);
 	Elem *sim = imaSimbola(tabelaSimbola, vrednost);
 	if (sim) {
-		int simNum = (sim->deo ->vidljivost == 'l') ? sim->deo->sekcija : 0;
+		int simNum = (sim->deo->vidljivost == 'l') ? sim->deo->sekcija : sim->deo->rb;
 		tSekcija->dodajRelokaciju(new Relocation(tSekcija->trVel + 2, 0, "APS_16_H", simNum));
 		if (sim->deo->vidljivost == 'l')
 			simNum = sim->deo->vrednost & 0x0000ffff;
 		else simNum = 0x00000000;
-		rezultat = rezultat | simNum;
+		rezultat = rezultat | (simNum >>16);
 	}else{
 		int c = stoi(vrednost);
 		c = (c>>8) | 0x00000000;
@@ -181,7 +192,7 @@ void Ldcl(int &rezultat, string line, int& i, string word, Elem *tabelaSimbola, 
 	string vrednost = getParameter(line, i);
 	Elem *sim = imaSimbola(tabelaSimbola, vrednost);
 	if (sim) {
-		int simNum = (sim->deo->vidljivost == 'l') ? sim->deo->sekcija : 0;
+		int simNum = (sim->deo->vidljivost == 'l') ? sim->deo->sekcija : sim->deo->rb;
 		tSekcija->dodajRelokaciju(new Relocation(tSekcija->trVel+2, 0, "APS_16_L", simNum));
 		if (sim->deo->vidljivost == 'l')
 			simNum = sim->deo->vrednost;
@@ -194,3 +205,4 @@ void Ldcl(int &rezultat, string line, int& i, string word, Elem *tabelaSimbola, 
 		rezultat = rezultat | c;
 	}
 }
+#endif

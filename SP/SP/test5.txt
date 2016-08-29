@@ -1,0 +1,8 @@
+.bss.one
+add r2, 5
+lab3:
+ldr r16, r3,0,lab3
+lt str r2, r5, 0, 12
+.text
+call PC, lab3
+.end

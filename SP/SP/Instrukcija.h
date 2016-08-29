@@ -1,4 +1,5 @@
-#pragma once
+#ifndef INSTRUKCIJA_H_
+#define INSTRUKCIJA_H_
 #include "stdafx.h"
 #include "Functions.h"
 #include "PostaviUslove.h"
@@ -67,11 +68,11 @@ int obradiInstrukciju(string word, int& i, string line, Elem *tabelaSimbola, Tab
 		Call(rezultat, line, i, word, tabelaSimbola, tSekcije);
 	}
 	else if (word == "in") {
-		rezultat = rezultat | 0x0d008000;
+		rezultat = rezultat | 0x0d000000;
 		InOut(rezultat, line, i, word);
 	}
 	else if (word == "out") {
-		rezultat = rezultat | 0x0d008000;
+		rezultat = rezultat | 0x0d000000;
 		InOut(rezultat, line, i, word);
 	}
 	else if (word == "mov") {
@@ -119,3 +120,4 @@ int obradiInstrukciju(string word, int& i, string line, Elem *tabelaSimbola, Tab
 	return rezultat;
 
 }
+#endif
